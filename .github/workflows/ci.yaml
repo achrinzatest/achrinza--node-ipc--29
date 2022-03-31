@@ -1,0 +1,33 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+name: CI
+
+jobs:
+  test:
+    name: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        node-version:
+          - 15
+        npm-flags:
+          - ""
+          - "--engine-strict"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: npm ci --ignore-scripts ${{ matrix.npm-flags }}
+
